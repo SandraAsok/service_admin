@@ -143,11 +143,11 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                   textStyle: MaterialStateProperty.all(
                       const TextStyle(color: Colors.white, fontSize: 25)),
                   padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(horizontal: 50, vertical: 25)),
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
                 ),
                 child: const Text(
                   "Submit",
-                  style: TextStyle(),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
