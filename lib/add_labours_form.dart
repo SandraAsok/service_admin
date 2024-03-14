@@ -1,5 +1,11 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:service_admin/lists.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class AddLaboursForm extends StatefulWidget {
   const AddLaboursForm({super.key});
@@ -9,15 +15,33 @@ class AddLaboursForm extends StatefulWidget {
 }
 
 String? jobvalue;
+String image = '';
 TextEditingController name = TextEditingController();
 TextEditingController age = TextEditingController();
 TextEditingController phone = TextEditingController();
 TextEditingController address = TextEditingController();
 TextEditingController details = TextEditingController();
 
+Future addlabour() async {
+  try {
+    await FirebaseFirestore.instance.collection('labours').add({
+      'image': image,
+      'name': name.text,
+      'age': age.text,
+      'phone': phone.text,
+      'address': address.text,
+      'job': jobvalue,
+      'details': details.text,
+    });
+  } catch (e) {
+    log(e.toString());
+  }
+}
+
 class _AddLaboursFormState extends State<AddLaboursForm> {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -33,7 +57,34 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
           children: [
             Center(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  final pickedfile = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
+                  if (pickedfile == null) {
+                    return;
+                  } else {
+                    File file = File(pickedfile.path);
+                    image = await uploadImage(file);
+                    setState(() {});
+                  }
+                },
+                child: SizedBox(
+                    height: size.height * 0.5,
+                    width: size.width * 0.6,
+                    child: image == ''
+                        ? Container(
+                            height: size.height * 0.4,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.purple, width: 2.0)),
+                            child: const Center(
+                                child: Text(
+                              "Pick Image",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 20),
+                            )),
+                          )
+                        : Image.network(image)),
               ),
             ),
             Padding(
@@ -100,7 +151,9 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  addlabour();
+                },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.purple),
                   textStyle: MaterialStateProperty.all(
@@ -118,5 +171,18 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
         ),
       ),
     );
+  }
+
+  Future<String> uploadImage(File file) async {
+    firebase_storage.FirebaseStorage storage =
+        firebase_storage.FirebaseStorage.instance;
+    DateTime now = DateTime.now();
+    String timestamp = now.millisecondsSinceEpoch.toString();
+    firebase_storage.Reference ref = storage.ref().child('images/$timestamp');
+    firebase_storage.UploadTask task = ref.putFile(file);
+    await task;
+    String downloadURL = await ref.getDownloadURL();
+    image = downloadURL;
+    return image;
   }
 }
