@@ -48,7 +48,8 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                     return;
                   } else {
                     File file = File(pickedfile.path);
-                    imageList = await uploadImage(file);
+                    //imageList = await uploadImage(file);
+                    await uploadImage(file);
                     setState(() {});
                   }
                 },
@@ -158,7 +159,19 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
     );
   }
 
-  Future<List<String>> uploadImage(File file) async {
+  // Future<List<String>> uploadImage(File file) async {
+  //   firebase_storage.FirebaseStorage storage =
+  //       firebase_storage.FirebaseStorage.instance;
+  //   DateTime now = DateTime.now();
+  //   String timestamp = now.millisecondsSinceEpoch.toString();
+  //   firebase_storage.Reference ref = storage.ref().child('images/$timestamp');
+  //   firebase_storage.UploadTask task = ref.putFile(file);
+  //   await task;
+  //   String downloadURL = await ref.getDownloadURL();
+  //   imageList.add(downloadURL);
+  //   return imageList;
+  // }
+  Future<void> uploadImage(File file) async {
     firebase_storage.FirebaseStorage storage =
         firebase_storage.FirebaseStorage.instance;
     DateTime now = DateTime.now();
@@ -167,8 +180,10 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
     firebase_storage.UploadTask task = ref.putFile(file);
     await task;
     String downloadURL = await ref.getDownloadURL();
-    imageList.add(downloadURL);
-    return imageList;
+
+    setState(() {
+      imageList.add(downloadURL);
+    });
   }
 
   Future addlabour() async {
