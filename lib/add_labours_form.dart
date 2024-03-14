@@ -15,30 +15,14 @@ class AddLaboursForm extends StatefulWidget {
 }
 
 String? jobvalue;
-String image = '';
 TextEditingController name = TextEditingController();
 TextEditingController age = TextEditingController();
 TextEditingController phone = TextEditingController();
 TextEditingController address = TextEditingController();
 TextEditingController details = TextEditingController();
 
-Future addlabour() async {
-  try {
-    await FirebaseFirestore.instance.collection('labours').add({
-      'image': image,
-      'name': name.text,
-      'age': age.text,
-      'phone': phone.text,
-      'address': address.text,
-      'job': jobvalue,
-      'details': details.text,
-    });
-  } catch (e) {
-    log(e.toString());
-  }
-}
-
 class _AddLaboursFormState extends State<AddLaboursForm> {
+  List<String> imageList = [];
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -64,14 +48,14 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                     return;
                   } else {
                     File file = File(pickedfile.path);
-                    image = await uploadImage(file);
+                    imageList = await uploadImage(file);
                     setState(() {});
                   }
                 },
                 child: SizedBox(
                     height: size.height * 0.5,
                     width: size.width * 0.6,
-                    child: image == ''
+                    child: imageList.isEmpty
                         ? Container(
                             height: size.height * 0.4,
                             decoration: BoxDecoration(
@@ -84,7 +68,7 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                                   TextStyle(color: Colors.black, fontSize: 20),
                             )),
                           )
-                        : Image.network(image)),
+                        : Image.network(imageList[0])),
               ),
             ),
             Padding(
@@ -173,7 +157,7 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
     );
   }
 
-  Future<String> uploadImage(File file) async {
+  Future<List<String>> uploadImage(File file) async {
     firebase_storage.FirebaseStorage storage =
         firebase_storage.FirebaseStorage.instance;
     DateTime now = DateTime.now();
@@ -182,7 +166,23 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
     firebase_storage.UploadTask task = ref.putFile(file);
     await task;
     String downloadURL = await ref.getDownloadURL();
-    image = downloadURL;
-    return image;
+    imageList.add(downloadURL);
+    return imageList;
+  }
+
+  Future addlabour() async {
+    try {
+      await FirebaseFirestore.instance.collection('labours').add({
+        'image': imageList,
+        'name': name.text,
+        'age': age.text,
+        'phone': phone.text,
+        'address': address.text,
+        'job': jobvalue,
+        'details': details.text,
+      });
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }
