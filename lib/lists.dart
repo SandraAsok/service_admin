@@ -1,0 +1,18 @@
+List<String> jobs = [
+  "Electrical",
+  "Painting",
+  "Plumping",
+  "Home Appliances",
+  "Cleaning",
+  "Home Shifting",
+  "Fabrication",
+  "Bakery",
+  "Clothing",
+  "Tailoring",
+  "Saloon",
+  "General Service",
+  "Groceries",
+  "Decoration",
+  "Rental",
+  "Vehicle Service",
+];
