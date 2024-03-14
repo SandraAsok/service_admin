@@ -137,6 +137,7 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
               child: ElevatedButton(
                 onPressed: () {
                   addlabour();
+                  Navigator.pop(context);
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.purple),
