@@ -14,6 +14,7 @@ void main() {
       appId: "1:632744309940:android:063901222a9068f27393e1",
       messagingSenderId: "632744309940",
       projectId: "atozservice-b6c16",
+      storageBucket: "atozservice-b6c16.appspot.com",
     ),
   );
   runApp(const MaterialApp(

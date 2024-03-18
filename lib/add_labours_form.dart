@@ -8,7 +8,7 @@ import 'package:service_admin/lists.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class AddLaboursForm extends StatefulWidget {
-  const AddLaboursForm({super.key});
+  const AddLaboursForm({Key? key});
 
   @override
   State<AddLaboursForm> createState() => _AddLaboursFormState();
@@ -23,6 +23,7 @@ TextEditingController details = TextEditingController();
 
 class _AddLaboursFormState extends State<AddLaboursForm> {
   List<String> imageList = [];
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -48,28 +49,31 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                     return;
                   } else {
                     File file = File(pickedfile.path);
-                    //imageList = await uploadImage(file);
-                    await uploadImage(file);
-                    setState(() {});
+
+                    setState(() async {
+                      imageList = await uploadImage(file);
+                    });
                   }
                 },
                 child: SizedBox(
-                    height: size.height * 0.5,
-                    width: size.width * 0.6,
-                    child: imageList.isEmpty
-                        ? Container(
-                            height: size.height * 0.4,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.purple, width: 2.0)),
-                            child: const Center(
-                                child: Text(
+                  height: size.height * 0.5,
+                  width: size.width * 0.6,
+                  child: imageList.isEmpty
+                      ? Container(
+                          height: size.height * 0.4,
+                          decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.purple, width: 2.0)),
+                          child: const Center(
+                            child: Text(
                               "Pick Image",
                               style:
                                   TextStyle(color: Colors.black, fontSize: 20),
-                            )),
-                          )
-                        : Image.network(imageList[0])),
+                            ),
+                          ),
+                        )
+                      : Image.network(imageList[0]),
+                ),
               ),
             ),
             Padding(
@@ -77,7 +81,9 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
               child: TextField(
                 controller: name,
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.person), labelText: 'Labour name'),
+                  icon: Icon(Icons.person),
+                  labelText: 'Labour name',
+                ),
               ),
             ),
             Padding(
@@ -85,7 +91,9 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
               child: TextField(
                 controller: age,
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.person), labelText: 'Labour age'),
+                  icon: Icon(Icons.person),
+                  labelText: 'Labour age',
+                ),
               ),
             ),
             Padding(
@@ -93,7 +101,9 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
               child: TextField(
                 controller: phone,
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.phone), labelText: 'Phone number'),
+                  icon: Icon(Icons.phone),
+                  labelText: 'Phone number',
+                ),
               ),
             ),
             Padding(
@@ -102,7 +112,9 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                 controller: address,
                 maxLines: 5,
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.home), labelText: 'Address With Pincode'),
+                  icon: Icon(Icons.home),
+                  labelText: 'Address With Pincode',
+                ),
               ),
             ),
             DropdownButtonFormField<String>(
@@ -113,9 +125,7 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
               items: jobs.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(
-                    value,
-                  ),
+                  child: Text(value),
                 );
               }).toList(),
               onChanged: (newvalue) {
@@ -130,7 +140,9 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                 controller: details,
                 maxLines: 5,
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.details), labelText: 'Details'),
+                  icon: Icon(Icons.details),
+                  labelText: 'Details',
+                ),
               ),
             ),
             Padding(
@@ -143,9 +155,11 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.purple),
                   textStyle: MaterialStateProperty.all(
-                      const TextStyle(color: Colors.white, fontSize: 25)),
+                    const TextStyle(color: Colors.white, fontSize: 25),
+                  ),
                   padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  ),
                 ),
                 child: const Text(
                   "Submit",
@@ -159,19 +173,7 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
     );
   }
 
-  // Future<List<String>> uploadImage(File file) async {
-  //   firebase_storage.FirebaseStorage storage =
-  //       firebase_storage.FirebaseStorage.instance;
-  //   DateTime now = DateTime.now();
-  //   String timestamp = now.millisecondsSinceEpoch.toString();
-  //   firebase_storage.Reference ref = storage.ref().child('images/$timestamp');
-  //   firebase_storage.UploadTask task = ref.putFile(file);
-  //   await task;
-  //   String downloadURL = await ref.getDownloadURL();
-  //   imageList.add(downloadURL);
-  //   return imageList;
-  // }
-  Future<void> uploadImage(File file) async {
+  Future<List<String>> uploadImage(File file) async {
     firebase_storage.FirebaseStorage storage =
         firebase_storage.FirebaseStorage.instance;
     DateTime now = DateTime.now();
@@ -180,13 +182,11 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
     firebase_storage.UploadTask task = ref.putFile(file);
     await task;
     String downloadURL = await ref.getDownloadURL();
-
-    setState(() {
-      imageList.add(downloadURL);
-    });
+    imageList.add(downloadURL);
+    return imageList;
   }
 
-  Future addlabour() async {
+  Future<void> addlabour() async {
     try {
       await FirebaseFirestore.instance.collection('labours').add({
         'image': imageList,
