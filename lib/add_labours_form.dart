@@ -49,10 +49,8 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
                     return;
                   } else {
                     File file = File(pickedfile.path);
-
-                    setState(() async {
-                      imageList = await uploadImage(file);
-                    });
+                    imageList = await uploadImage(file);
+                    setState(() async {});
                   }
                 },
                 child: SizedBox(

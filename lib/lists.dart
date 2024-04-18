@@ -5,7 +5,7 @@ List<String> jobs = [
   "Home Appliances",
   "Cleaning",
   "Home Shifting",
-  "Fabrication",
+  "Furniture",
   "Bakery",
   "Clothing",
   "Tailoring",
