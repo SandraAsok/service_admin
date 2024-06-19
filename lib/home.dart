@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:service_admin/add_labours_form.dart';
+import 'package:service_admin/bookings.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -16,29 +17,43 @@ class Home extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AddLaboursForm(),
-              ));
+      bottomSheet: BottomSheet(
+        onClosing: () {},
+        builder: (context) {
+          return Row(
+            children: [
+              Spacer(),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Bookings(),
+                      ));
+                },
+                child: const Text(
+                  "Booking Details",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+              SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddLaboursForm(),
+                      ));
+                },
+                child: const Text(
+                  "Add Labour",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+              Spacer(),
+            ],
+          );
         },
-        child: const Text(
-          "Add",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-      ),
-      body: const Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Text(
-              "labours list",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
       ),
     );
   }
