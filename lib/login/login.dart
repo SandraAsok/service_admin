@@ -1,9 +1,10 @@
-// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:service_admin/home.dart';
+import 'package:service_admin/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -17,6 +18,14 @@ TextEditingController email = TextEditingController();
 TextEditingController password = TextEditingController();
 
 class _LoginState extends State<Login> {
+  bool _obsecuretext = true;
+
+  void _togglepassword() {
+    setState(() {
+      _obsecuretext = !_obsecuretext;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     signin() async {
@@ -26,16 +35,16 @@ class _LoginState extends State<Login> {
         if (user != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.purple,
-            content: const Text("Admin logged in successfully"),
+            content: Text("Admin logged in successfully"),
             action: SnackBarAction(label: 'Dismiss', onPressed: () {}),
           ));
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const Home()));
+              context, MaterialPageRoute(builder: (context) => Home()));
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.purple,
-          content: const Text("something went wrong"),
+          content: Text("something went wrong"),
           action: SnackBarAction(label: 'Dismiss', onPressed: () {}),
         ));
         log("ERROR: $e");
@@ -47,32 +56,38 @@ class _LoginState extends State<Login> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(15.0),
+            padding: EdgeInsets.all(15.0),
             child: TextField(
               controller: email,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.person),
-                  label: const Text('Email'),
+                  prefixIcon: Icon(Icons.person),
+                  label: Text('Email'),
                   hintText: 'Type Here',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20))),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(15.0),
+            padding: EdgeInsets.all(15.0),
             child: TextField(
               controller: password,
-              obscureText: true,
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: _obsecuretext,
               decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock),
-                  label: const Text('Password'),
+                  prefixIcon: Icon(Icons.lock),
+                  label: Text('Password'),
                   hintText: 'Type Here',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20))),
+                      borderRadius: BorderRadius.circular(20)),
+                  suffixIcon: IconButton(
+                      onPressed: _togglepassword,
+                      icon: _obsecuretext
+                          ? Icon(Icons.visibility)
+                          : Icon(Icons.visibility_off))),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           ElevatedButton(
               onPressed: () async {
                 final SharedPreferences sharedPreferences =
@@ -80,14 +95,14 @@ class _LoginState extends State<Login> {
                 sharedPreferences.setString('email', email.text);
                 signin();
               },
-              style: const ButtonStyle(
+              style: ButtonStyle(
                   side: MaterialStatePropertyAll<BorderSide>(
                       BorderSide(color: Colors.purple)),
                   fixedSize:
                       MaterialStatePropertyAll<Size>(Size.fromHeight(50)),
                   textStyle: MaterialStatePropertyAll<TextStyle>(
                       TextStyle(fontSize: 18))),
-              child: const Text("Admin Login")),
+              child: Text("Admin Login")),
         ],
       ),
     );

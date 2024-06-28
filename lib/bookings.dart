@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,7 +16,10 @@ class _BookingsState extends State<Bookings> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('bookings').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('bookings')
+              .orderBy('booked_date', descending: true)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return ListView.separated(
@@ -58,7 +63,7 @@ class _BookingsState extends State<Bookings> {
             } else if (snapshot.hasError) {
               print(snapshot.error);
             }
-            return const CircularProgressIndicator();
+            return CircularProgressIndicator();
           }),
     );
   }

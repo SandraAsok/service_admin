@@ -1,6 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:service_admin/add_labours_form.dart';
+import 'package:service_admin/additionalservice/additional.dart';
 import 'package:service_admin/bookings.dart';
+import 'package:service_admin/services/services.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -10,12 +13,34 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Center(
+        title: Center(
           child: Text(
             "Admin Panel",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
           ),
         ),
+      ),
+      body: Column(
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Services(),
+                    ));
+              },
+              child: Text("Services")),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AdditionalServices(),
+                    ));
+              },
+              child: Text("Additional Services")),
+        ],
       ),
       bottomSheet: BottomSheet(
         onClosing: () {},
@@ -31,25 +56,12 @@ class Home extends StatelessWidget {
                         builder: (context) => Bookings(),
                       ));
                 },
-                child: const Text(
+                child: Text(
                   "Booking Details",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
               SizedBox(width: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddLaboursForm(),
-                      ));
-                },
-                child: const Text(
-                  "Add Labour",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-              ),
               Spacer(),
             ],
           );
