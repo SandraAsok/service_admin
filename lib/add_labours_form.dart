@@ -140,6 +140,11 @@ class _AddLaboursFormState extends State<AddLaboursForm> {
               child: ElevatedButton(
                 onPressed: () {
                   addlabour();
+                  name.clear();
+                  age.clear();
+                  phone.clear();
+                  address.clear();
+                  details.clear();
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(

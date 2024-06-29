@@ -39,107 +39,96 @@ class _ViewDetailsState extends State<ViewDetails> {
         ),
       ),
       body: SingleChildScrollView(
-        child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('bookings')
-                .where('labour_name', isEqualTo: name)
-                .where('job', isEqualTo: jobvalue)
-                .snapshots(),
-            builder: (context, snapshot) {
-              final bookings = snapshot.data!.docs.length;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: SizedBox(
-                          height: size.height * 0.5,
-                          width: size.width * 0.6,
-                          child: Container(
-                            height: size.height * 0.4,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.purple, width: 2.0),
-                                image: DecorationImage(
-                                    image: NetworkImage(image))),
-                          )),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text("Name : $name"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text("Age : $age"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text("Phone : $phone"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text("Address : $address"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text("Details : $details"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text("Job Category : $jobvalue"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text("Total Bookings : $bookings"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text("Feedbacks :"),
-                  ),
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('feedback')
-                          .where('job', isEqualTo: jobvalue)
-                          .where('labour_name', isEqualTo: name)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          log(snapshot.error.toString());
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        }
-                        return ListView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            final document = snapshot.data!.docs[index];
-                            return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Divider(),
-                                    Text(
-                                      document['userID'],
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      document['review'],
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Divider(),
-                                  ],
-                                ));
-                          },
-                        );
-                      }),
-                ],
-              );
-            }),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: GestureDetector(
+                onTap: () {},
+                child: SizedBox(
+                    height: size.height * 0.3,
+                    width: size.width * 0.6,
+                    child: Container(
+                      height: size.height * 0.4,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.purple, width: 2.0),
+                          image: DecorationImage(
+                              fit: BoxFit.cover, image: NetworkImage(image))),
+                    )),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text("Name : $name"),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text("Age : $age"),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text("Phone : $phone"),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text("Address : $address"),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text("Details : $details"),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text("Job Category : $jobvalue"),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text("Total Bookings : "),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text("Feedbacks :"),
+            ),
+            StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('feedback')
+                    .where('job', isEqualTo: jobvalue)
+                    .where('labour_name', isEqualTo: name)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    log(snapshot.error.toString());
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      final document = snapshot.data!.docs[index];
+                      return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Divider(),
+                              Text(
+                                document['userID'],
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                document['review'],
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Divider(),
+                            ],
+                          ));
+                    },
+                  );
+                }),
+          ],
+        ),
       ),
     );
   }

@@ -1,13 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:service_admin/lists.dart';
 
 class EditLaboursForm extends StatefulWidget {
   const EditLaboursForm({super.key});
@@ -17,14 +15,12 @@ class EditLaboursForm extends StatefulWidget {
 }
 
 class _EditLaboursFormState extends State<EditLaboursForm> {
-  List<String> imageList = [];
-  String? jobvalue;
   TextEditingController name = TextEditingController();
   TextEditingController age = TextEditingController();
   TextEditingController phone = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController details = TextEditingController();
-
+  String image = "";
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
@@ -35,7 +31,7 @@ class _EditLaboursFormState extends State<EditLaboursForm> {
     address.text = args['address'];
     details.text = args['details'];
     String image = args['image'];
-    jobvalue = args['job'];
+    String jobvalue = args['job'];
 
     final size = MediaQuery.of(context).size;
 
@@ -61,14 +57,14 @@ class _EditLaboursFormState extends State<EditLaboursForm> {
                     return;
                   } else {
                     File file = File(pickedfile.path);
-                    imageList = await uploadImage(file);
+                    image = await uploadImage(file);
                     setState(() async {});
                   }
                 },
                 child: SizedBox(
                   height: size.height * 0.5,
                   width: size.width * 0.6,
-                  child: imageList.isEmpty
+                  child: image == ""
                       ? Container(
                           height: size.height * 0.4,
                           decoration: BoxDecoration(
@@ -77,7 +73,7 @@ class _EditLaboursFormState extends State<EditLaboursForm> {
                               image:
                                   DecorationImage(image: NetworkImage(image))),
                         )
-                      : Image.network(imageList[0]),
+                      : Image.network(image),
                 ),
               ),
             ),
@@ -122,22 +118,9 @@ class _EditLaboursFormState extends State<EditLaboursForm> {
                 ),
               ),
             ),
-            DropdownButtonFormField<String>(
-              iconSize: 25,
-              dropdownColor: Colors.purple,
-              hint: Text("Job Type"),
-              value: jobvalue,
-              items: jobs.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (newvalue) {
-                setState(() {
-                  jobvalue = newvalue;
-                });
-              },
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text(jobvalue),
             ),
             Padding(
               padding: EdgeInsets.all(15.0),
@@ -153,8 +136,19 @@ class _EditLaboursFormState extends State<EditLaboursForm> {
             Padding(
               padding: EdgeInsets.all(15.0),
               child: ElevatedButton(
-                onPressed: () {
-                  editlabour(id);
+                onPressed: () async {
+                  await FirebaseFirestore.instance
+                      .collection('labours')
+                      .doc(id)
+                      .update({
+                    'image': image,
+                    'name': name.text,
+                    'age': age.text,
+                    'phone': phone.text,
+                    'address': address.text,
+                    'job': jobvalue,
+                    'details': details.text,
+                  });
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(
@@ -178,7 +172,7 @@ class _EditLaboursFormState extends State<EditLaboursForm> {
     );
   }
 
-  Future<List<String>> uploadImage(File file) async {
+  Future<String> uploadImage(File file) async {
     firebase_storage.FirebaseStorage storage =
         firebase_storage.FirebaseStorage.instance;
     DateTime now = DateTime.now();
@@ -187,23 +181,9 @@ class _EditLaboursFormState extends State<EditLaboursForm> {
     firebase_storage.UploadTask task = ref.putFile(file);
     await task;
     String downloadURL = await ref.getDownloadURL();
-    imageList.add(downloadURL);
-    return imageList;
-  }
-
-  Future<void> editlabour(String id) async {
-    try {
-      await FirebaseFirestore.instance.collection('labours').doc(id).update({
-        'image': imageList,
-        'name': name.text,
-        'age': age.text,
-        'phone': phone.text,
-        'address': address.text,
-        'job': jobvalue,
-        'details': details.text,
-      });
-    } catch (e) {
-      log(e.toString());
-    }
+    setState(() {
+      image = downloadURL;
+    });
+    return image;
   }
 }

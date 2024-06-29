@@ -34,7 +34,7 @@ void main() {
 String? finalemail;
 
 class Splash extends StatefulWidget {
-  Splash({super.key});
+  const Splash({super.key});
 
   @override
   State<Splash> createState() => _SplashState();

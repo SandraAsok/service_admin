@@ -18,6 +18,11 @@ class AdditionalServices extends StatefulWidget {
 
 class _AdditionalServicesState extends State<AdditionalServices> {
   String image = "";
+  List<String> option = [
+    "shop",
+    "labour",
+  ];
+  String? optionvalue;
   TextEditingController newservice = TextEditingController();
 
   @override
@@ -41,8 +46,7 @@ class _AdditionalServicesState extends State<AdditionalServices> {
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () {
-                          if (document['service'] == 'bakery' ||
-                              document['service'] == 'groceries') {
+                          if (document['option'] == 'shop') {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -92,7 +96,7 @@ class _AdditionalServicesState extends State<AdditionalServices> {
                 builder: (context) => AlertDialog(
                   title: const Text("Add new service"),
                   content: SizedBox(
-                    height: 200,
+                    height: 250,
                     child: Column(
                       children: [
                         GestureDetector(
@@ -122,6 +126,23 @@ class _AdditionalServicesState extends State<AdditionalServices> {
                           decoration: const InputDecoration(
                               hintText: "enter new service"),
                         ),
+                        SizedBox(height: 10),
+                        DropdownButton(
+                          elevation: 0,
+                          hint: Text("Select service Option"),
+                          value: optionvalue,
+                          onChanged: (value) {
+                            setState(() {
+                              optionvalue = value;
+                            });
+                          },
+                          items: option.map((String value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
                       ],
                     ),
                   ),
@@ -138,6 +159,7 @@ class _AdditionalServicesState extends State<AdditionalServices> {
                               .add({
                             'cover': image,
                             'service': newservice.text,
+                            'option': optionvalue,
                           });
                           image = "";
                           newservice.clear();
