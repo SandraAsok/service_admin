@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:service_admin/additionalservice/additional.dart';
 import 'package:service_admin/bookings.dart';
 import 'package:service_admin/services/services.dart';
 
@@ -31,15 +30,15 @@ class Home extends StatelessWidget {
                     ));
               },
               child: Text("Services")),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AdditionalServices(),
-                    ));
-              },
-              child: Text("Additional Services")),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       Navigator.push(
+          //           context,
+          //           MaterialPageRoute(
+          //             builder: (context) => AdditionalServices(),
+          //           ));
+          //     },
+          //     child: Text("Additional Services")),
         ],
       ),
       bottomSheet: BottomSheet(

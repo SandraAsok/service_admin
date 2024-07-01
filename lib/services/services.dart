@@ -1,10 +1,8 @@
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:service_admin/labourslist.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:service_admin/services/add_service.dart';
 
 class Services extends StatefulWidget {
   const Services({
@@ -74,85 +72,14 @@ class _ServicesState extends State<Services> {
         ),
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text("Add new service"),
-                  content: SizedBox(
-                    height: 200,
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            final pickedfile = await ImagePicker()
-                                .pickImage(source: ImageSource.gallery);
-                            if (pickedfile == null) {
-                              return;
-                            } else {
-                              File file = File(pickedfile.path);
-                              image = await _uploadimage(file);
-                              setState(() {});
-                            }
-                          },
-                          child: image != ""
-                              ? CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: NetworkImage(image),
-                                )
-                              : CircleAvatar(
-                                  radius: 50,
-                                  child: Text("Add image"),
-                                ),
-                        ),
-                        TextField(
-                          controller: newservice,
-                          decoration:
-                              InputDecoration(hintText: "enter new service"),
-                        ),
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text("cancel")),
-                    TextButton(
-                        onPressed: () async {
-                          await FirebaseFirestore.instance
-                              .collection("services")
-                              .add({
-                            'cover': image,
-                            'service': newservice.text,
-                          });
-                          image = "";
-                          newservice.clear();
-                          Navigator.pop(context);
-                        },
-                        child: Text("Add")),
-                  ],
-                ),
-              );
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddService(),
+                  ));
             },
             label: Text("Add New Service")),
       ),
     );
-  }
-
-  Future<String> _uploadimage(File file) async {
-    final firebase_storage.FirebaseStorage storage =
-        firebase_storage.FirebaseStorage.instance;
-    DateTime now = DateTime.now();
-    String timestamp = now.microsecondsSinceEpoch.toString();
-    firebase_storage.Reference reference =
-        storage.ref().child('images/$timestamp');
-    firebase_storage.UploadTask task = reference.putFile(file);
-    await task;
-    String downloadurl = await reference.getDownloadURL();
-    setState(() {
-      image = downloadurl;
-    });
-    return image;
   }
 }

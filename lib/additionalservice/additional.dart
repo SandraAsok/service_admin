@@ -8,9 +8,7 @@ import 'package:service_admin/labourslist.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class AdditionalServices extends StatefulWidget {
-  const AdditionalServices({
-    super.key,
-  });
+  const AdditionalServices({super.key});
 
   @override
   State<AdditionalServices> createState() => _AdditionalServicesState();
