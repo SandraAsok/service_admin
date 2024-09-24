@@ -27,7 +27,7 @@ class _BookingsState extends State<Bookings> {
                 itemBuilder: (context, index) {
                   final data = snapshot.data!.docs[index];
                   return ListTile(
-                    title: Text('${data['category']}  -  ${data['job']}'),
+                    title: Text('${data['job']} -client -  ${data['name']}'),
                     subtitle: Column(
                       children: [
                         Text(data['labour_name']),
@@ -37,7 +37,7 @@ class _BookingsState extends State<Bookings> {
                               try {
                                 String phone = data['labour_phone'];
                                 String message =
-                                    "Your ${data['category']} - ${data['job']} service booking has been done \n Booking Details: labour name : ${data['labour_name']} \n Booked Date: ${data['booked_date']} \n Working Hours: ${data['hours']} \n For any queries contact the labour : ${data['labour_phone']} \n - A2Z Service";
+                                    "Your ${data['job']} - ${data['details']}\n service booking has been done \n Booking Details: labour name : ${data['labour_name']} \n Booked Date: ${data['booked_date']} \n Working Hours: ${data['hours']} \n For any queries contact the labour : ${data['labour_phone']} \n - A2Z Service";
                                 final url = Uri(
                                   scheme: 'sms',
                                   path: phone,
@@ -50,10 +50,38 @@ class _BookingsState extends State<Bookings> {
                                 print(e);
                               }
                             },
-                            icon: Icon(Icons.sms))
+                            icon: Icon(Icons.sms)),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ElevatedButton.icon(
+                                style: ButtonStyle(
+                                    fixedSize: MaterialStatePropertyAll(
+                                        Size(200, 20))),
+                                icon: Icon(Icons.call),
+                                onPressed: () {},
+                                label: Text(data['labour_name'])),
+                            ElevatedButton(
+                                onPressed: () {}, child: Text('Inform client')),
+                          ],
+                        ),
+                        data['status'] == "pending"
+                            ? MaterialButton(
+                                color: Colors.redAccent,
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('bookings')
+                                      .doc(data.id)
+                                      .update({'status': 'assigned'});
+                                  setState(() {});
+                                },
+                                child: Text("Job Assigned ?"))
+                            : MaterialButton(
+                                color: Colors.greenAccent,
+                                onPressed: () {},
+                                child: Text("Assigned")),
                       ],
                     ),
-                    trailing: Text('client - ${data['name']}'),
                   );
                 },
                 separatorBuilder: (context, index) {

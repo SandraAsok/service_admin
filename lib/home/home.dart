@@ -30,15 +30,6 @@ class Home extends StatelessWidget {
                     ));
               },
               child: Text("Services")),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //             builder: (context) => AdditionalServices(),
-          //           ));
-          //     },
-          //     child: Text("Additional Services")),
         ],
       ),
       bottomSheet: BottomSheet(
